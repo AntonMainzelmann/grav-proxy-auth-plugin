@@ -1,5 +1,5 @@
 name: Proxy Authentication
-version: 0.0.1
+version: 1.7.1
 description: Authenticate users based on headers set by upstream proxy servers.
 icon: sign-in
 author:
@@ -8,8 +8,12 @@ author:
 keywords: login, authentication
 license: DBAD
 
+compatibility:
+  grav: ['1.7', '2.0']
+
 dependencies:
-  - login
+  - { name: grav, version: '>=1.7.0' }
+  - { name: login, version: '>=3.4' }
   - form
 
 form:
@@ -26,11 +30,40 @@ form:
       validate:
         type: bool
 
+    route:
+      type: text
+      size: medium
+      label: Base Login Route
+      default: '/login'
+      help: 'Base route for login mapping, e.g. /login'
+
+    route_mapping:
+      type: list
+      label: Login Route Mapping
+      help: Map specific login routes to roles and redirects.
+      collapsible: false
+      collapsed: false
+      fields:
+        .group:
+          type: text
+          label: Group
+          help: 'This group will be assigned and used as the route path, e.g. "admin" becomes /login/admin'
+        .redirect:
+          type: text
+          label: Redirect Target
+          help: 'Where to redirect after login (e.g. /admin)'
+
     headers.username:
       type: text
       size: medium
       label: Username header
       default: 'X-Remote-User'
+
+    headers.username_regex:
+      type: text
+      size: medium
+      label: Username Extraction Regex
+      help: 'Optional regular expression to extract the username from the header (e.g. "/(.*)/"). First capture group will be used.'
 
     headers.displayName:
       type: text
@@ -43,6 +76,12 @@ form:
       size: medium
       label: User e-mail address header
       default: 'X-Remote-Email'
+
+    headers.email_regex:
+      type: text
+      size: medium
+      label: Email Extraction Regex
+      help: 'Optional regular expression to extract the email from the header (e.g. "/(?:.*:)?(.*@.*)/"). First capture group will be used.'
 
     headers.groups:
       type: text
